@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 
-import sys
 import re
+import click
 
 import pymongo
 db = pymongo.MongoClient().dyi
 
-def search(pat):
-    maxlen = int(sys.argv[2]) if len(sys.argv) > 2 else 10000
+
+@click.command()
+@click.option('--maxlen', default=2000, help='Max length of trans part.')
+@click.option('--phase', '-p', default=False, is_flag=True, help='Show phase.')
+@click.argument('pat', type=str)
+def search(pat, maxlen, phase):
+    '''Search words according to given re pattern.'''
 
     regx = re.compile(pat, re.IGNORECASE)
     items = list(db.words.find({"_id": regx}))
@@ -20,13 +25,13 @@ def search(pat):
         p = i.get("p") or " "
         t = i.get("t") or " "
 
+        if not phase and len(w.split()) > 1:
+            continue
+
         t = t[:maxlen]
 
         pat = "{0:>{wwide}} | {1:<{pwide}} | {2}"
         print(pat.format(w, p, t, wwide=wwide, pwide=pwide))
 
 if __name__ == "__main__":
-    try:
-        search(sys.argv[1])
-    except:
-        pass
+    search()
