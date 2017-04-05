@@ -8,11 +8,13 @@ db = pymongo.MongoClient().dyi
 
 
 @click.command()
-@click.option('--maxlen', default=2000, help='Max length of trans part.')
+@click.option('--maxlen', '-m', default=40, help='Max length of trans part.')
 @click.option('--phase', '-p', default=False, is_flag=True, help='Show phase.')
 @click.argument('pat', type=str)
 def search(pat, maxlen, phase):
     '''Search words according to given re pattern.'''
+
+    maxlen = 10000 if maxlen < 1 else maxlen
 
     regx = re.compile(pat, re.IGNORECASE)
     items = list(db.words.find({"_id": regx}))
@@ -34,4 +36,7 @@ def search(pat, maxlen, phase):
         print(pat.format(w, p, t, wwide=wwide, pwide=pwide))
 
 if __name__ == "__main__":
-    search()
+    try:
+        search()
+    except:
+        pass
