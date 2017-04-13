@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+import os
 import click
 
 import pymongo
@@ -18,13 +19,20 @@ pipe = fmtn(1, '|')
 def search(pat, maxlen, phase, full):
     '''Search words according to given re pattern.'''
 
+    columns = os.get_terminal_size().columns
+
     if full:
         maxlen = 10000
     else:
         maxlen = 10000 if maxlen < 1 else maxlen
 
     regx = re.compile(pat, re.IGNORECASE)
-    items = list(db.words.find({"_id": regx}))
+    ascii = re.compile(u'[\x00-\x7F]+', re.IGNORECASE)
+
+    if ascii.match(pat):
+        items = list(db.words.find({"_id": regx}))
+    else:
+        items = list(db.words.find({"t": regx}))
 
     wwide, pwide = 0, 0
 
@@ -39,6 +47,10 @@ def search(pat, maxlen, phase, full):
             wwide = len(w)
         if pwide < len(p):
             pwide = len(p)
+
+    if not full:
+        maxlen = columns - wwide - pwide - 6
+        maxlen = int(maxlen / 2)
 
     for i in items:
         w = i.get("_id")
