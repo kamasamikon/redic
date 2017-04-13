@@ -38,10 +38,12 @@ def search(pat, maxlen, phase, full):
 
     for i in items:
         w = i.get("_id")
-        p = i.get("p") or " "
+        if not phase:
+            ww = w.replace('-', ' ').replace('.', ' ')
+            if len(ww.split()) > 1:
+                continue
 
-        if not phase and len(w.split()) > 1:
-            continue
+        p = i.get("p") or " "
 
         if wwide < len(w):
             wwide = len(w)
@@ -72,7 +74,7 @@ def search(pat, maxlen, phase, full):
             count -= 2
 
         if not phase:
-            ww = w.replace('-', ' ')
+            ww = w.replace('-', ' ').replace('.', ' ')
             if len(ww.split()) > 1:
                 continue
 
