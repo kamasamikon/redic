@@ -57,12 +57,26 @@ def search(pat, maxlen, phase, full):
         p = i.get("p") or " "
         t = i.get("t") or " "
 
+        if full:
+            count = 100000
+        else:
+            left = columns - wwide - pwide - 6
+
+            count = 0
+            for i in t:
+                left -= 2 if ord(i) > 127 else 1
+                if left <= 0:
+                    break
+                count += 1
+        if count > 2:
+            count -= 2
+
         if not phase:
             ww = w.replace('-', ' ')
             if len(ww.split()) > 1:
                 continue
 
-        t = t[:maxlen]
+        t = t[:count]
 
         pat = " {0:>{wwide}} %s {1:<{pwide}} %s {2}" % (pipe, pipe)
         print(pat.format(w, p, t, wwide=wwide, pwide=pwide))
