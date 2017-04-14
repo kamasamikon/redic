@@ -19,7 +19,10 @@ pipe = fmtn(1, '|')
 def search(pat, maxlen, phase, full):
     '''Search words according to given re pattern.'''
 
-    columns = os.get_terminal_size().columns
+    try:
+        columns = os.get_terminal_size().columns
+    except:
+        full = True
 
     if full:
         maxlen = 10000
@@ -82,7 +85,4 @@ def search(pat, maxlen, phase, full):
         print(pat.format(w, p, t, wwide=wwide, pwide=pwide))
 
 if __name__ == "__main__":
-    try:
-        search()
-    except:
-        pass
+    search()
