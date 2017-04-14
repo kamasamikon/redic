@@ -51,7 +51,7 @@ def search(pat, maxlen, phase, full):
             pwide = len(p)
 
     if not full:
-        maxlen = columns - wwide - pwide - 6
+        maxlen = columns - wwide - pwide - 8
         maxlen = int(maxlen / 2)
 
     for i in items:
@@ -62,7 +62,7 @@ def search(pat, maxlen, phase, full):
         if full:
             count = 100000
         else:
-            left = columns - wwide - pwide - 6
+            left = columns - wwide - pwide - 8
 
             count = 0
             for i in t:
@@ -70,8 +70,6 @@ def search(pat, maxlen, phase, full):
                 if left <= 0:
                     break
                 count += 1
-        if count > 2:
-            count -= 2
 
         if not phase:
             ww = w.replace('-', ' ').replace('.', ' ')
