@@ -8,7 +8,7 @@ import pymongo
 db = pymongo.MongoClient().dyi
 
 fmtn = '\033[0;3{}m{}\033[0m'.format
-pipe = fmtn(1, '|')
+pipe = fmtn(2, '|')
 
 
 @click.command()
@@ -81,8 +81,10 @@ def search(pat, maxlen, phase, full):
 
         t = t[:count]
 
-        pat = " {0:>{wwide}} %s {1:<{pwide}} %s {2}" % (pipe, pipe)
-        print(pat.format(w, p, t, wwide=wwide, pwide=pwide))
+        ofmt = " {0:>{wwide}} %s {1:<{pwide}} %s {2}" % (pipe, pipe)
+        ostr = ofmt.format(w, p, t, wwide=wwide, pwide=pwide)
+
+        print(re.sub(r"(%s)" % pat, r"\033[0;31m\1\033[0m", ostr))
 
 if __name__ == "__main__":
     search()
