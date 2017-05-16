@@ -21,7 +21,7 @@ def scored(word, maxlen=50, minration=0.7):
             continue
         r = ratio(word, w)
         if r >= minration:
-            d[w] = ratio(word, w)
+            d[w] = r
 
     words = sorted(d.items(), key=lambda x: -x[1])[:maxlen]
     return [w[0] for w in words]
