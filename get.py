@@ -3,6 +3,7 @@
 import re
 import os
 import click
+from Levenshtein import ratio
 
 import pymongo
 db = pymongo.MongoClient().dyi
@@ -10,14 +11,33 @@ db = pymongo.MongoClient().dyi
 fmtn = '\033[0;3{}m{}\033[0m'.format
 pipe = fmtn(2, '|')
 
+def scored(word, maxlen=50, minration=0.7):
+    words = db.words.find({}, {"_id":1})
+
+    d = {}
+    for w in words:
+        w = w["_id"]
+        if w == word or w.find(" ") >= 0:
+            continue
+        r = ratio(word, w)
+        if r >= minration:
+            d[w] = r
+
+    words = sorted(d.items(), key=lambda x: -x[1])[:maxlen]
+    return [w[0] for w in words]
 
 @click.command()
 @click.option('--maxlen', '-m', default=40, help='Max length of trans part.')
 @click.option('--phase', '-p', default=False, is_flag=True, help='Show phase.')
 @click.option('--full', '-f', default=False, is_flag=True, help='Full output.')
+@click.option('--similar', '-s', default=False, is_flag=True, help='Find similar.')
 @click.argument('pat', type=str)
-def search(pat, maxlen, phase, full):
+def search(pat, maxlen, phase, full, similar):
     '''Search words according to given re pattern.'''
+
+    if similar:
+        words = scored(pat)
+        pat = "|".join(["\\b" + w + "\\b" for w in words])
 
     try:
         columns = os.get_terminal_size().columns
