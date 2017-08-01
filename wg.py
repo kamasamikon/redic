@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import os
+import sys
+import requests
 import click
-import dbquery
 
+import urllib.parse as urllib_parse
 
 @click.command()
 @click.option('--maxlen', '-m', default=40, help='Max length of trans part.')
@@ -19,8 +22,20 @@ def search(pat, maxlen, phase, full, similar):
     except:
         winwidth = 0
 
-    lines = dbquery.search(pat, maxlen, phase, full, similar, winwidth)
-    print("\r\n".join(lines))
+    url = "http://localhost:12000/"
+    url += urllib_parse.quote_plus(pat)
+    url += "?m=%d" % int(maxlen)
+    url += "&p=%d" % int(phase)
+    url += "&f=%d" % int(full)
+    url += "&s=%d" % int(similar)
+    url += "&w=%d" % int(winwidth)
+
+    print(url)
+    r = requests.get(url)
+    if r.ok:
+        print(r.text)
 
 if __name__ == "__main__":
     search()
+
+# vim: sw=4 ts=4 sts=4 ai et
