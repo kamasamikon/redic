@@ -6,7 +6,7 @@
 #
 
 import sys
-from bottle import run, request, get, post
+from bottle import run, request, get
 
 import dbquery
 
@@ -24,17 +24,24 @@ def getword(word):
     winwidth = int(q.get("w", 0))
     pat = word
 
-    klog.d()
     lines = dbquery.search(pat, maxlen, phase, full, similar, winwidth)
-    klog.d()
-    resp = "\r\n".join(lines).encode() or b"<NOT FOUND>"
-    klog.d()
+    resp = "\r\n".join(lines).encode() or "<NOT FOUND>"
     return resp
 
 
-@post("/spider/<type>")
-def spider(word):
-    """Query word"""
+@get("/spider/<spider>/start")
+def spider_start(spider):
+    return "Start it"
+
+
+@get("/spider/<spider>/stop")
+def spider_stop(spider):
+    return "Stop it"
+
+
+@get("/spider/<spider>/status")
+def spider_status(spider):
+    return "Status it"
 
 
 def main(argv=None):

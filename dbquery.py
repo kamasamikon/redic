@@ -30,6 +30,8 @@ def scored(word, maxlen=50, minration=0.7):
 def search(pat, maxlen, phase, full, similar, winwidth=0):
     '''Search words according to given re pattern.'''
 
+    print("PAT::::: ", pat)
+
     lines = []
 
     if similar:
