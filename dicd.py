@@ -13,6 +13,7 @@ import dbquery
 from mie.xlogger import klog
 klog.to_stdout()
 
+import pprint
 
 @get("/<word>")
 def getword(word):

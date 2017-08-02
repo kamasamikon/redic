@@ -24,40 +24,26 @@ def search(pat, maxlen, phase, full, similar, local):
         winwidth = 0
 
     if local:
-        klog.d()
         import dbquery
-        klog.d()
         lines = dbquery.search(pat, maxlen, phase, full, similar, winwidth)
-        klog.d()
         print("\r\n".join(lines))
-        klog.d()
     else:
-        klog.d()
-        import requests
-        import urllib.parse as urllib_parse
-        klog.d()
+        import pycurl
 
         url = "http://localhost:12000/"
-        url += urllib_parse.quote_plus(pat)
+        url += pat
         url += "?m=%d" % int(maxlen)
         url += "&p=%d" % int(phase)
         url += "&f=%d" % int(full)
         url += "&s=%d" % int(similar)
         url += "&w=%d" % int(winwidth)
 
-        print(url)
-        klog.d()
-        r = requests.get(url)
-        klog.d()
-        if r.ok:
-            klog.d()
-            print(r.text)
-            klog.d()
+        c = pycurl.Curl()
+        c.setopt(c.URL, url.encode('utf-8'))
+        c.perform()
 
 
 if __name__ == "__main__":
-    klog.d(">>>")
     search()
-    klog.d("<<<")
 
 # vim: sw=4 ts=4 sts=4 ai et
