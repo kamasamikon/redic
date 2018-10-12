@@ -5,11 +5,12 @@ import sys
 from bs4 import BeautifulSoup
 import requests
 import jieba
+import click
 
 from mie.bprint import varfmt
 
 
-def main(word):
+def peek(word):
     '''
     {
         work: "",
@@ -21,7 +22,6 @@ def main(word):
         }
     }
     '''
-
     dic = {}
 
     url = "http://youdao.com/w/eng/%s/" % word
@@ -36,6 +36,8 @@ def main(word):
     trans = soup.find("div", {"class": "trans-container"})
     liList = trans.find_all("li")
     text = " ".join([li.text for li in liList])
+
+    dic["org"] = text
 
     def add(typ, word):
         lis = dic["tran"].get(typ)
@@ -59,10 +61,14 @@ def main(word):
         add(typ, x)
     print(varfmt(dic, None, True))
 
+@click.command()
+@click.argument('words', nargs=-1, type=str)
+def main(words):
+    for w in words:
+        peek(w)
+    map(peek, words)
 
 if __name__ == "__main__":
-    wList = ("shit", "who", "true", "none", "call")
-    for w in wList:
-        main(w)
+    main()
 
 # vim: sw=4 ts=4 sts=4 ai et

@@ -6,17 +6,24 @@
 #
 
 import sys
-from bottle import run, request, get
+from bottle import run, request, get, post
 
 import dbquery
 
-from mie.xlogger import klog
+from mie.bottlemisc import body
+from mie.xlogger.klog import klog
 klog.to_stdout()
 
-import pprint
+
+@post("/<word>")
+def word_add(word):
+    calldic = body()
+    usr = calldic.get("user")
+
+
 
 @get("/<word>")
-def getword(word):
+def word_get(word):
     q = request.query
     maxlen = int(q.get("m", 40))
     phase = int(q.get("p", 0))
@@ -25,7 +32,7 @@ def getword(word):
     winwidth = int(q.get("w", 0))
     pat = word
 
-    lines = dbquery.search(pat, maxlen, phase, full, similar, winwidth)
+    lines = dbquery.word_get(pat, maxlen, phase, full, similar, winwidth)
     resp = "\r\n".join(lines).encode() or "<NOT FOUND>"
     return resp
 

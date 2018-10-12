@@ -27,7 +27,7 @@ def scored(word, maxlen=50, minration=0.7):
     return [w[0] for w in words]
 
 
-def search(pat, maxlen, phase, full, similar, winwidth=0):
+def word_get(pat, maxlen, phase, full, similar, winwidth=0):
     '''Search words according to given re pattern.'''
 
     print("PAT::::: ", pat)
@@ -109,5 +109,18 @@ def search(pat, maxlen, phase, full, similar, winwidth=0):
         lines.append(re.sub(r"(%s)" % pat, r"\033[0;31m\1\033[0m", ostr))
 
     return lines
+
+
+def word_add(w, p, t):
+    o = dict(_id=w, p=p, t=t)
+
+    old = db.words.find_one({"_id": w})
+    if old:
+        oldt = old.get("t", "")
+        if oldt != t:
+            o["t"] = t + " " + oldt
+            db.words.replace_one({"_id": w}, o, True)
+    else:
+        db.words.insert_one(o)
 
 # vim: sw=4 ts=4 sts=4 ai et

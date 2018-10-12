@@ -4,7 +4,7 @@
 import os
 import click
 
-from mie.xlogger import klog
+from mie.xlogger.klog import klog
 klog.to_stdout()
 
 
@@ -25,7 +25,7 @@ def search(pat, maxlen, phase, full, similar, local):
 
     if local:
         import dbquery
-        lines = dbquery.search(pat, maxlen, phase, full, similar, winwidth)
+        lines = dbquery.word_get(pat, maxlen, phase, full, similar, winwidth)
         print("\r\n".join(lines))
     else:
         import pycurl
